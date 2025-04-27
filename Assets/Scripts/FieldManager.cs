@@ -5,6 +5,8 @@ using UnityEngine;
 public class FieldManager : MonoBehaviour
 {
     private GameState mode = GameState.PLAY;
+    public List<GameObject> moveBeacons;
+    public GameObject EatablePrefab;
     //Access To Event manager
     [SerializeField] public EventManager eventMan;
     //Listens: PlayerAte, WaveEnd, WaveEndAgeWipe, StartNextWave
@@ -41,6 +43,17 @@ public class FieldManager : MonoBehaviour
         else
         {
             Debug.LogException(new System.Exception("Somehow selected a target value that cannot be achieved."));
+        }
+    }
+
+    public void Awake()
+    {
+        GameObject making;
+        for(int i=0;i<9;i++)
+        {
+            making = Instantiate<GameObject>(EatablePrefab);
+            making.GetComponent<Eatables>().setupNav(moveBeacons);
+            allItems.Add(making.GetComponent<Eatables>());
         }
     }
 

@@ -11,9 +11,9 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
-  - 
+  - Terrain
+  - Player
+  - Eatable
   - 
   - 
   - 
@@ -40,4 +40,13 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Stage
+    uniqueID: 1848847785
+    locked: 0
+  - name: Eatables
+    uniqueID: 798973799
+    locked: 0
+  - name: Player
+    uniqueID: 526260461
     locked: 0
