@@ -12,17 +12,19 @@ public class Eatables : FieldItem
 
     public void OnEnable()
     {
-        eventMan?.Play?.AddListener(onPlay);
-        eventMan?.Pause?.AddListener(onPause);
-        eventMan?.PlayerAte?.AddListener(onPlayerAte);
-        eventMan?.ItemExpired?.AddListener(onItemExpired);
+        eventMan.Play.AddListener(onPlay);
+        eventMan.Pause.AddListener(onPause);
+        eventMan.PlayerAte.AddListener(onPlayerAte);
+        eventMan.ItemExpired.AddListener(onItemExpired);
+        eventMan.WaveEnd.AddListener(onWaveEnd);
     }
     public void OnDisable()
     {
-        eventMan?.Play?.RemoveListener(onPlay);
-        eventMan?.Pause?.RemoveListener(onPause);
-        eventMan?.PlayerAte?.RemoveListener(onPlayerAte);
-        eventMan?.ItemExpired?.RemoveListener(onItemExpired);
+        eventMan.Play.RemoveListener(onPlay);
+        eventMan.Pause.RemoveListener(onPause);
+        eventMan.PlayerAte.RemoveListener(onPlayerAte);
+        eventMan.ItemExpired.RemoveListener(onItemExpired);
+        eventMan.WaveEnd.RemoveListener(onWaveEnd);
     }
     private void onPlay()
     {
@@ -38,15 +40,23 @@ public class Eatables : FieldItem
     {
         if(target==this)
         {
-            //It got eaten. Delete itself (or maybe just disable because that's less expensive?
+            //It got eaten. Delete itself (or maybe just disable because that's less expensive? And will probably break less other stuff that relies on it.
         }
+    }
+    private void onWaveEnd(bool success)
+    {
+        if(success==true) age += age;
     }
 
     private void onItemExpired(Eatables target)
     {
         if(target==this)
         {
-            //Delete itself, and maybe some other stuff?
+            //Delete itself, and maybe some other stuff. Or probably just disable itself instead.
         }
+    }
+    public void resetAge()
+    {
+        age = 0;
     }
 }

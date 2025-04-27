@@ -11,4 +11,7 @@ public class EventManager : ScriptableObject
     public UnityEvent<Eatables> PlayerAte;
     public UnityEvent<Eatables> ItemExpired;
     public UnityEvent<bool> WaveEnd;
+    public UnityEvent WaveEndAgeWipe;
+    public UnityEvent SpawnEatables;
+    public UnityEvent StartNextWave;
 }
