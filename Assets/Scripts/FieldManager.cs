@@ -102,19 +102,23 @@ public class FieldManager : MonoBehaviour
 
     private void onWaveEnd(bool success)
     {
+        Debug.Log("Called Wave End");
         if (!success)
         {
+            Debug.Log("Player Didn't match Target, game over.");
             //game over
             eventMan?.GameOver?.Invoke();
         }
         else
         {
-            wave += wave;
+            
+            wave = wave + 1;
             eventMan?.WaveEndAgeWipe?.Invoke();
         }
     }
     private void onWaveEndAgeWipe()
     {
+        Debug.Log("Called Age Wipe");
         //Wipe out any items above a certain age
         foreach(Eatables eat in items)
         {
@@ -124,12 +128,16 @@ public class FieldManager : MonoBehaviour
             }
         }
         //Invoke SpawnEatables at the end to move to the next step
+        eventMan?.SpawnEatables?.Invoke();
     }
     private void onSpawnEatables()
     {
+        Debug.Log("Called Spawn Eatables");
         //Spawn more Eatables
         //Spawn a number of Eatables equal to wave, up to 3 max.
+        Debug.Log("Wave is still: " + wave);
         int toSpawn = ((wave > 3) ? 3 : wave);
+        Debug.Log("Need to spawn: " + toSpawn);
         int tries = 0;
         spawnDelta = 0;//Reset spawnDelta to zero. May or may not make the game too easy? Maybe it should be halved instead. But it needs to reduce somehow or the numbers that spawn will never go down again...
         foreach (int val in currentEatableValues) spawnDelta = ((Mathf.Abs(val) > spawnDelta) ? Mathf.Abs(val) : spawnDelta); //check if any are bigger than the spawn delta and increase the delta if they are.
@@ -141,13 +149,13 @@ public class FieldManager : MonoBehaviour
             {
                 toSpawn -= 1;
                 //Do the setup for it to spawn
-                check.GetComponent<Renderer>().enabled = false;
+                check.GetComponentInChildren<SpriteRenderer>().enabled = false;
                 check.SetActive(true);
                 if(wave==1)check.GetComponent<Eatables>().spawnSetup(1, Quaternion.Euler(0, Random.Range(0, 360), 0) * Vector3.forward * startSpawnDistance);
                 else check.GetComponent<Eatables>().spawnSetup(Random.Range(-spawnDelta, spawnDelta), Quaternion.Euler(0, Random.Range(0, 360), 0) * Vector3.forward * startSpawnDistance);
                 items.Add(check.GetComponent<Eatables>());
                 currentEatableValues.Add(check.GetComponent<Eatables>().eatValue);
-                check.GetComponent<Renderer>().enabled = true;
+                check.GetComponentInChildren<SpriteRenderer>().enabled = true;
             }
             else
             {
@@ -158,12 +166,15 @@ public class FieldManager : MonoBehaviour
         //Need to recalculate viable target values now
         recalculateAchievableValues();
         //Then invoke the event to move to the next wave.
+        eventMan?.StartNextWave?.Invoke();
     }
     //Invoke StartNextWave at the end to move to the next step
     private void onStartNextWave()
     {
         //Do stuff to determine the next target value
-        setTarget(achievableValues[Random.Range(0, (achievableValues.Count - 1))]);//make it whatever it needs to be
+        Debug.Log("Start Next Wave called");
+        setTarget(achievableValues[Random.Range(0, (achievableValues.Count))]);//make it whatever it needs to be
+        Debug.Log("Next Target: " + target);
     }
 
     private void FixedUpdate()
@@ -172,13 +183,17 @@ public class FieldManager : MonoBehaviour
         if (mode == GameState.NONE || mode == GameState.PAUSE) return;
         if (starting)
         {
+            Debug.Log("Starting");
             if(startupTimer>0)
             {
+                Debug.Log("Starting Timer countdown");
                 startupTimer = startupTimer - (Time.time - lastTime);
             }
             else if (startupTimer<=0)
             {
+                Debug.Log("Starting Timer hit 0, game startup");
                 starting = false;
+                resetTimer();
                 eventMan?.Play?.Invoke();
                 eventMan?.WaveEnd?.Invoke(true);
             }
@@ -186,6 +201,7 @@ public class FieldManager : MonoBehaviour
         }
         if (timer > 0)
         {
+            //Debug.Log("Timer Counting Down");
             timer = timer - (Time.time - lastTime);
             lastTime = Time.time;
             if (timer/timerMax<=lowTimerValue)
@@ -195,6 +211,8 @@ public class FieldManager : MonoBehaviour
         }
         else if (timer <= 0)
         {
+            Debug.Log("Timer hit zero, wave end");
+            resetTimer();
             if (player.eatValue == target) eventMan?.WaveEnd?.Invoke(true);
             else eventMan?.WaveEnd?.Invoke(false);
         }
@@ -230,6 +248,12 @@ public class FieldManager : MonoBehaviour
             i += 1;
             j = i + 1;
             k = j + 1;
+        }
+        Debug.Log(achievableValues);
+        Debug.Log("Achievable Values");
+        foreach(int aaaaa in achievableValues)
+        {
+            Debug.Log("aaa" + aaaaa);
         }
     }
 
