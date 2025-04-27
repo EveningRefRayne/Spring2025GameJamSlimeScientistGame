@@ -75,6 +75,7 @@ public class Eatables : FieldItem
         if(target==this)
         {
             //It got eaten. Delete itself (or maybe just disable because that's less expensive? And will probably break less other stuff that relies on it.
+            this.gameObject.SetActive(false);
         }
     }
     private void onWaveEnd(bool success)
@@ -87,6 +88,7 @@ public class Eatables : FieldItem
         if(target==this)
         {
             //Delete itself, and maybe some other stuff. Or probably just disable itself instead.
+            this.gameObject.SetActive(false);
         }
     }
     public void resetAge()

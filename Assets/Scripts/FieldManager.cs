@@ -88,11 +88,12 @@ public class FieldManager : MonoBehaviour
         if (!success)
         {
             //game over
+            eventMan?.GameOver?.Invoke();
         }
         else
         {
             wave += wave;
-            eventMan.WaveEndAgeWipe.Invoke();
+            eventMan?.WaveEndAgeWipe?.Invoke();
         }
     }
     private void onWaveEndAgeWipe()
@@ -102,7 +103,7 @@ public class FieldManager : MonoBehaviour
         {
             if(eat.age>=eatableMaxAge)
             {
-                eventMan.ItemExpired.Invoke(eat);
+                eventMan?.ItemExpired?.Invoke(eat);
             }
         }
         //Invoke SpawnEatables at the end to move to the next step
@@ -157,13 +158,13 @@ public class FieldManager : MonoBehaviour
             lastTime = Time.time;
             if (timer/timerMax<=lowTimerValue)
             {
-                eventMan.TimerLow.Invoke();
+                eventMan?.TimerLow?.Invoke();
             }
         }
         else if (timer <= 0)
         {
-            if (player.eatValue == target) eventMan.WaveEnd.Invoke(true);
-            else eventMan.WaveEnd.Invoke(false);
+            if (player.eatValue == target) eventMan?.WaveEnd?.Invoke(true);
+            else eventMan?.WaveEnd?.Invoke(false);
         }
     }
     private float resetTimer()
@@ -176,6 +177,7 @@ public class FieldManager : MonoBehaviour
     private void recalculateAchievableValues ()
     {
         //Do whatever it needs to do to accomplish this
+        achievableValues.Clear();
         int i = 0;
         int j = 1;
         int k = 2;
@@ -185,14 +187,14 @@ public class FieldManager : MonoBehaviour
             {
                 while(k<currentEatableValues.Count)
                 {
-                    achievableValues.Add(currentEatableValues[i] + currentEatableValues[j] + currentEatableValues[k]);
+                    achievableValues.Add(player.eatValue+currentEatableValues[i] + currentEatableValues[j] + currentEatableValues[k]);
                     k += 1;
                 }
-                achievableValues.Add(currentEatableValues[i] + currentEatableValues[j]);
+                achievableValues.Add(player.eatValue+currentEatableValues[i] + currentEatableValues[j]);
                 j += 1;
                 k = j + 1;
             }
-            achievableValues.Add(currentEatableValues[i]);
+            achievableValues.Add(player.eatValue+currentEatableValues[i]);
             i += 1;
             j = i + 1;
             k = j + 1;
