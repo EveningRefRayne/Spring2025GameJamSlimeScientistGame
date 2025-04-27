@@ -54,5 +54,6 @@ public class Player : FieldItem
     public void OnTriggerEnter2D(Collider2D collision)
     {
         //Check if you hit an Eatable and eat it. Will call PlayerAte Invoke after adding the eatable value to its own.
+        if (collision.gameObject.GetComponent<Eatables>()) eventMan?.PlayerAte?.Invoke(collision.GetComponent<Eatables>());
     }
 }

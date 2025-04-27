@@ -14,4 +14,6 @@ public class EventManager : ScriptableObject
     public UnityEvent WaveEndAgeWipe;
     public UnityEvent SpawnEatables;
     public UnityEvent StartNextWave;
+    public UnityEvent TimerLow;
+    public UnityEvent GameOver;
 }

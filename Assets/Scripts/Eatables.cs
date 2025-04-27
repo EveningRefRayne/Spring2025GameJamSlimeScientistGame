@@ -2,13 +2,47 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.AI;
 
 public class Eatables : FieldItem
 {
     private GameState mode = GameState.NONE;
-    private int age = 0;
+    public int age { get; private set; } = 0;
     //Listens: Play, Pause, ItemExpired
     //Invokes: PlayerAte
+
+
+    public NavMeshAgent navAgent;
+    public Vector3 moveTarget;
+    public List<GameObject> moveBeacons;
+    public float enemyAIUpdateTime;
+    private float lastAIUpdateTime = 0;
+    public float AITimeMin = 0.25f;
+    public float AITimeMax = 0.75f;
+
+    public void spawnSetup(int val, Vector3 startPos)
+    {
+        resetAge();
+        setEatValue(val);
+        gameObject.transform.position = startPos;
+    }
+
+
+    public void Awake()
+    {
+        navAgent = GetComponent<NavMeshAgent>();
+        randomizeNextUpdateTime();
+    }
+
+    public void randomizeNextUpdateTime()
+    {
+        enemyAIUpdateTime = Random.Range(AITimeMin, AITimeMax);
+    }
+
+    public void setupNav(List<GameObject> bcn)
+    {
+        moveBeacons = bcn;
+    }
 
     public void OnEnable()
     {
@@ -41,6 +75,7 @@ public class Eatables : FieldItem
         if(target==this)
         {
             //It got eaten. Delete itself (or maybe just disable because that's less expensive? And will probably break less other stuff that relies on it.
+            this.gameObject.SetActive(false);
         }
     }
     private void onWaveEnd(bool success)
@@ -53,10 +88,25 @@ public class Eatables : FieldItem
         if(target==this)
         {
             //Delete itself, and maybe some other stuff. Or probably just disable itself instead.
+            this.gameObject.SetActive(false);
         }
     }
     public void resetAge()
     {
         age = 0;
     }
+
+    public void FixedUpdate()
+    {
+        //Don't do anything when game isn't in play mode
+        if (mode == GameState.PAUSE || mode == GameState.NONE) return;
+
+        //Movement AI
+        if (Time.time >= lastAIUpdateTime + enemyAIUpdateTime)
+        {
+            navAgent.SetDestination(moveBeacons[Random.Range(0, (moveBeacons.Count - 1))].transform.position);
+            lastAIUpdateTime = Time.time;
+        }
+    }
 }
+
