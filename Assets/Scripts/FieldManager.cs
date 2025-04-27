@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class FieldManager : MonoBehaviour
 {
-    private GameState mode = GameState.NONE;
+    private GameState mode = GameState.PLAY;
     //Access To Event manager
     [SerializeField] public EventManager eventMan;
     //Listens: PlayerAte, WaveEnd, WaveEndAgeWipe, StartNextWave
@@ -13,11 +13,13 @@ public class FieldManager : MonoBehaviour
     [SerializeField] private List<Eatables> items;
     [SerializeField] private List<int> currentEatableValues;
     [SerializeField] private List<int> achievableValues;
-    public int target { get; private set; }
+    public int target { get; private set; } = 0;
     public int wave = 0;
     [SerializeField] private float timerMax;
     private float timerBase=10f;
     private float lastTime = 0;
+    private bool starting = true;
+    private float startupTimer = 1.5f;
     private float timer;
     private int spawnDelta = 0;
     public float startSpawnDistance = 10;
@@ -78,6 +80,8 @@ public class FieldManager : MonoBehaviour
     }
     private void onPlayerAte(Eatables tar)
     {
+        player.setEatValue(player.eatValue + tar.eatValue);
+        Debug.Log("player at: " + player.eatValue);
         items.Remove(tar);
         currentEatableValues.Remove(tar.eatValue);
     }
@@ -126,7 +130,8 @@ public class FieldManager : MonoBehaviour
                 //Do the setup for it to spawn
                 check.GetComponent<Renderer>().enabled = false;
                 check.SetActive(true);
-                check.GetComponent<Eatables>().spawnSetup(Random.Range(-spawnDelta, spawnDelta), Quaternion.Euler(0, Random.Range(0, 360), 0) * Vector3.forward * startSpawnDistance);
+                if(wave==1)check.GetComponent<Eatables>().spawnSetup(1, Quaternion.Euler(0, Random.Range(0, 360), 0) * Vector3.forward * startSpawnDistance);
+                else check.GetComponent<Eatables>().spawnSetup(Random.Range(-spawnDelta, spawnDelta), Quaternion.Euler(0, Random.Range(0, 360), 0) * Vector3.forward * startSpawnDistance);
                 items.Add(check.GetComponent<Eatables>());
                 currentEatableValues.Add(check.GetComponent<Eatables>().eatValue);
                 check.GetComponent<Renderer>().enabled = true;
@@ -152,6 +157,20 @@ public class FieldManager : MonoBehaviour
     {
         //Short circuit if game isn't in play mode
         if (mode == GameState.NONE || mode == GameState.PAUSE) return;
+        if (starting)
+        {
+            if(startupTimer>0)
+            {
+                startupTimer = startupTimer - (Time.time - lastTime);
+            }
+            else if (startupTimer<=0)
+            {
+                starting = false;
+                eventMan?.Play?.Invoke();
+                eventMan?.WaveEnd?.Invoke(true);
+            }
+            return;//short circuit here when doing startup to avoid running all the other usual timer code.
+        }
         if (timer > 0)
         {
             timer = timer - (Time.time - lastTime);

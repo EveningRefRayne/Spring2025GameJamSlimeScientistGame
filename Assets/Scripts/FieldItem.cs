@@ -7,7 +7,7 @@ public class FieldItem : MonoBehaviour
 {
     //Access To Event manager
     [SerializeField] public EventManager eventMan;
-    [SerializeField] public int eatValue {get; private set;}
+    [SerializeField] public int eatValue { get; private set; } = 0;
 
     public void setEatValue(int num)
     {

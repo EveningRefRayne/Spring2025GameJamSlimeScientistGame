@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 922ee3a93ad0eb74b815e04c62b91fa4, type: 3}
+  m_Name: EventManagerAsset
+  m_EditorClassIdentifier: 
+  Play:
+    m_PersistentCalls:
+      m_Calls: []
+  Pause:
+    m_PersistentCalls:
+      m_Calls: []
+  GameStateNone:
+    m_PersistentCalls:
+      m_Calls: []
+  PlayerAte:
+    m_PersistentCalls:
+      m_Calls: []
+  ItemExpired:
+    m_PersistentCalls:
+      m_Calls: []
+  WaveEnd:
+    m_PersistentCalls:
+      m_Calls: []
+  WaveEndAgeWipe:
+    m_PersistentCalls:
+      m_Calls: []
+  SpawnEatables:
+    m_PersistentCalls:
+      m_Calls: []
+  StartNextWave:
+    m_PersistentCalls:
+      m_Calls: []
+  TimerLow:
+    m_PersistentCalls:
+      m_Calls: []
+  GameOver:
+    m_PersistentCalls:
+      m_Calls: []

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Player : FieldItem
 {
-    private GameState mode = GameState.NONE;
+    private GameState mode = GameState.PLAY;
     [SerializeField] private float playerSpeed;
     private Vector3 mov;
     //Listens: Play, Pause

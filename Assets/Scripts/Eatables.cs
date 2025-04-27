@@ -6,16 +6,15 @@ using UnityEngine.AI;
 
 public class Eatables : FieldItem
 {
-    private GameState mode = GameState.NONE;
+    private GameState mode = GameState.PLAY;
     public int age { get; private set; } = 0;
     //Listens: Play, Pause, ItemExpired
-    //Invokes: PlayerAte
 
 
-    public NavMeshAgent navAgent;
+    [SerializeField] private NavMeshAgent navAgent;
     public Vector3 moveTarget;
     public List<GameObject> moveBeacons;
-    public float enemyAIUpdateTime;
+    public float AIUpdateTime;
     private float lastAIUpdateTime = 0;
     public float AITimeMin = 0.25f;
     public float AITimeMax = 0.75f;
@@ -31,12 +30,13 @@ public class Eatables : FieldItem
     public void Awake()
     {
         navAgent = GetComponent<NavMeshAgent>();
+        navAgent.updateRotation = false;
         randomizeNextUpdateTime();
     }
 
     public void randomizeNextUpdateTime()
     {
-        enemyAIUpdateTime = Random.Range(AITimeMin, AITimeMax);
+        AIUpdateTime = Random.Range(AITimeMin, AITimeMax);
     }
 
     public void setupNav(List<GameObject> bcn)
@@ -100,12 +100,12 @@ public class Eatables : FieldItem
     {
         //Don't do anything when game isn't in play mode
         if (mode == GameState.PAUSE || mode == GameState.NONE) return;
-
         //Movement AI
-        if (Time.time >= lastAIUpdateTime + enemyAIUpdateTime)
+        if (Time.time >= lastAIUpdateTime + AIUpdateTime)
         {
-            navAgent.SetDestination(moveBeacons[Random.Range(0, (moveBeacons.Count - 1))].transform.position);
+            navAgent.SetDestination(moveBeacons[Random.Range(0, (moveBeacons.Count))].transform.position);
             lastAIUpdateTime = Time.time;
+            randomizeNextUpdateTime();
         }
     }
 }
