@@ -19,6 +19,6 @@ public class MicroscopeViewBackground : MonoBehaviour
 
     void FixedUpdate()
     {
-        transform.Rotate(new Vector3(0, 0, -0.5f));
+        transform.Rotate(new Vector3(0, 0, -0.05f));
     }
 }
