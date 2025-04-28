@@ -1,11 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class FieldManager : MonoBehaviour
 {
     private GameState mode = GameState.PLAY;
     public List<GameObject> moveBeacons;
+    public GameObject timerLink;
+    public GameObject goalLink;
     public GameObject EatablePrefab;
     //Access To Event manager
     [SerializeField] public EventManager eventMan;
@@ -94,6 +98,7 @@ public class FieldManager : MonoBehaviour
     private void onPlayerAte(Eatables tar)
     {
         player.setEatValue(player.eatValue + tar.eatValue);
+        player.gameObject.GetComponentInChildren<TMP_Text>().text = "" + player.eatValue;
         Debug.Log("player at: " + player.eatValue);
         items.Remove(tar);
         currentEatableValues.Remove(tar.eatValue);
@@ -132,7 +137,7 @@ public class FieldManager : MonoBehaviour
     }
     private void onSpawnEatables()
     {
-        Debug.Log("Called Spawn Eatables");
+        //Debug.Log("Called Spawn Eatables");
         //Spawn more Eatables
         //Spawn a number of Eatables equal to wave, up to 3 max.
         Debug.Log("Wave is still: " + wave);
@@ -155,6 +160,17 @@ public class FieldManager : MonoBehaviour
                 else check.GetComponent<Eatables>().spawnSetup(Random.Range(-spawnDelta, spawnDelta), Quaternion.Euler(0, Random.Range(0, 360), 0) * Vector3.forward * startSpawnDistance);
                 items.Add(check.GetComponent<Eatables>());
                 currentEatableValues.Add(check.GetComponent<Eatables>().eatValue);
+                if(check.GetComponent<Eatables>().eatValue>=0)
+                {
+                    check.GetComponentInChildren<Animator>().Play("GreenEatable");
+                    check.GetComponentInChildren<TMP_Text>().text = "+" + check.GetComponent<Eatables>().eatValue;
+
+                }
+                else if(check.GetComponent<Eatables>().eatValue<0){
+                    check.GetComponentInChildren<Animator>().Play("NotGreenEatable");
+                    check.GetComponentInChildren<TMP_Text>().text = "" + check.GetComponent<Eatables>().eatValue;
+                }
+                
                 check.GetComponentInChildren<SpriteRenderer>().enabled = true;
             }
             else
@@ -172,9 +188,9 @@ public class FieldManager : MonoBehaviour
     private void onStartNextWave()
     {
         //Do stuff to determine the next target value
-        Debug.Log("Start Next Wave called");
+        
         setTarget(achievableValues[Random.Range(0, (achievableValues.Count))]);//make it whatever it needs to be
-        Debug.Log("Next Target: " + target);
+        goalLink.GetComponent<TMP_Text>().text = "" + target;
     }
 
     private void FixedUpdate()
@@ -201,6 +217,7 @@ public class FieldManager : MonoBehaviour
         }
         if (timer > 0)
         {
+            timerLink.GetComponent<Image>().fillAmount = (timer/timerMax);
             //Debug.Log("Timer Counting Down");
             timer = timer - (Time.time - lastTime);
             lastTime = Time.time;
